@@ -1,37 +1,24 @@
 package config
 
 import (
-	"os"
-
-	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
 type Config struct {
-	HTTPport   string
-	DBhost     string
-	DBname     string
-	DBusername string
-	DBpassword string
+	HTTPport   string `envconfig:"PORT"`
+	DBhost     string `envconfig:"DB_HOST"`
+	DBname     string `envconfig:"DB_NAME"`
+	DBusername string `envconfig:"DB_USERNAME"`
+	DBpassword string `envconfig:"DB_PASSWORD"`
 }
 
 func GetConfig() (*Config, error) {
+	cfg := &Config{}
+	err := envconfig.Process("", cfg)
 
-	file, err := os.Open("./app.env")
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	env, err := godotenv.Parse(file)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Config{
-		HTTPport:   env["HTTP_PORT"],
-		DBhost:     env["DB_HOST"],
-		DBname:     env["DB_NAME"],
-		DBusername: env["DB_USERNAME"],
-		DBpassword: env["DB_PASSWORD"],
-	}, err
+	return cfg, nil
 }
