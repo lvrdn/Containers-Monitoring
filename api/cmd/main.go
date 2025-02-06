@@ -3,12 +3,17 @@ package main
 import (
 	"api/pkg/config"
 	"api/pkg/container"
+	"api/pkg/storage"
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -17,30 +22,35 @@ func main() {
 		log.Fatalf("get config error: [%s]\n", err.Error())
 	}
 
-	// dsn := fmt.Sprintf(
-	// 	"postgres://%s:%s@%s/%s?sslmode=disable",
-	// 	cfg.DBusername,
-	// 	cfg.DBpassword,
-	// 	cfg.DBhost,
-	// 	cfg.DBname,
-	// )
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s/%s?sslmode=disable",
+		cfg.DBusername,
+		cfg.DBpassword,
+		cfg.DBhost,
+		cfg.DBname,
+	)
 
-	// db, err := sql.Open("postgres", dsn)
-	// if err != nil {
-	// 	log.Fatalf("open sql connection failed, error: [%s]\n", err.Error())
-	// }
-	// defer db.Close()
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalf("open sql connection failed, error: [%s]\n", err.Error())
+	}
+	defer db.Close()
 
-	// err = db.Ping()
-	// if err != nil {
-	// 	log.Fatalf("db  ping failed, error: [%s]\n", err.Error())
-	// }
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("db ping failed, error: [%s]\n", err.Error())
+	}
 
-	containerHandler := container.NewContainerHandler()
+	containerHandler := container.NewContainerHandler(storage.NewStorage(db, len(cfg.Addresses)))
+
+	err = containerHandler.InitData(cfg.Addresses)
+	if err != nil {
+		log.Fatalf("add to db container addresses error: [%s]\n", err.Error())
+	}
 
 	mux := http.NewServeMux()
-
-	mux.HandleFunc("POST /api/containers", containerHandler.ReceiveData)
+	mux.HandleFunc("POST /api/containers", containerHandler.UpdateData)
+	mux.HandleFunc("GET /api/containers", containerHandler.ShowData)
 
 	server := http.Server{
 		Addr:    ":" + cfg.HTTPport,

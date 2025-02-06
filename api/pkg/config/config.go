@@ -5,11 +5,12 @@ import (
 )
 
 type Config struct {
-	HTTPport   string `envconfig:"PORT"`
-	DBhost     string `envconfig:"DB_HOST"`
-	DBname     string `envconfig:"DB_NAME"`
-	DBusername string `envconfig:"DB_USERNAME"`
-	DBpassword string `envconfig:"DB_PASSWORD"`
+	HTTPport   string   `envconfig:"PORT"`
+	DBhost     string   `envconfig:"DB_HOST"`
+	DBname     string   `envconfig:"DB_NAME"`
+	DBusername string   `envconfig:"DB_USERNAME"`
+	DBpassword string   `envconfig:"DB_PASSWORD"`
+	Addresses  []string `envconfig:"ADDRESSES"`
 }
 
 func GetConfig() (*Config, error) {

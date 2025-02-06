@@ -9,6 +9,14 @@ api:
 
 .PHONY: pinger
 pinger:
-	source ./app.env
-	go build -o ./pinger/bin/api ./pinger/cmd/main.go
-	./pinger/bin/api.exe
+	set -a; \
+	. ./app.env; \
+	cd ./pinger; \
+	go build -o ./bin/pinger.exe ./cmd/main.go; \
+	./bin/pinger.exe
+
+db:
+	docker run --name dbmonitoring -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=monitoring -d postgres 
+
+db_connect:
+	psql -hlocalhost -p5432 -Uroot -dmonitoring 

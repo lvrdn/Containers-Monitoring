@@ -17,16 +17,10 @@ type Str struct {
 
 func main() {
 
-	cfg, err := config.GetConfig("./app.env")
+	cfg, err := config.GetConfig()
 	if err != nil {
 		log.Fatalf("get config failed: [%s]\n", err.Error())
 	}
-
-	ticker := time.NewTicker(cfg.PingFrequency)
-	wg := &sync.WaitGroup{}
-
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
 	workers := make([]*pinger.Pinger, len(cfg.Addresses))
 
@@ -38,6 +32,15 @@ func main() {
 			Timeout:   cfg.PingTimeout,
 		}
 	}
+
+	ticker := time.NewTicker(cfg.PingFrequency)
+
+	wg := &sync.WaitGroup{}
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	log.Println("Pinger started")
 
 LOOP:
 	for {
@@ -55,5 +58,7 @@ LOOP:
 			continue
 		}
 	}
+
+	log.Println("Pinger stopped")
 
 }

@@ -30,7 +30,7 @@ func (p *Pinger) Ping(wg *sync.WaitGroup) {
 	var alive bool
 
 	if err != nil {
-		log.Printf("ping failed: addr [%s]\n", p.PingAddr)
+		//log.Printf("ping failed: addr [%s]\n", p.PingAddr)
 		alive = false
 	} else {
 		alive = true
@@ -45,7 +45,7 @@ func (p *Pinger) Ping(wg *sync.WaitGroup) {
 
 func SendInfo(addr, method, pingedAddr string, alive bool, time time.Time) error {
 
-	dataToSend := []byte(fmt.Sprintf(`{"addr":"%s","alive":%v,"time":"%s"}`, pingedAddr, alive, time.Format("2006-01-02T15:04:05Z07:00")))
+	dataToSend := []byte(fmt.Sprintf(`{"addr":"%s","alive":%v,"last_ping_time":"%s"}`, pingedAddr, alive, time.Format("2006-01-02T15:04:05Z07:00")))
 
 	req, err := http.NewRequest(method, addr, bytes.NewBuffer(dataToSend))
 	if err != nil {
