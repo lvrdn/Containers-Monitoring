@@ -47,7 +47,7 @@ func (st *Storage) UpdateContainerRecord(address string, time time.Time, alive b
 
 func (st *Storage) ShowContainerRecords() ([]*container.Container, error) {
 
-	rows, err := st.DB.Query("SELECT address,last_ping,last_success_ping FROM containers")
+	rows, err := st.DB.Query("SELECT address,last_ping,last_success_ping FROM containers ORDER BY address")
 	if err != nil {
 		return nil, err
 	}
