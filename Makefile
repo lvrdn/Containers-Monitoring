@@ -15,6 +15,11 @@ pinger:
 	go build -o ./bin/pinger.exe ./cmd/main.go; \
 	./bin/pinger.exe
 
+.PHONY: frontend
+frontend:
+	cd ./frontend/react-intro; \
+	npm start
+
 db:
 	docker run --name dbmonitoring -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=monitoring -d postgres 
 
