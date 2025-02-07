@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -20,6 +21,10 @@ func GetConfig() (*Config, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	if cfg.PingFrequency <= cfg.PingTimeout {
+		return nil, fmt.Errorf("frequency value must be more than timeout value")
 	}
 
 	return cfg, nil

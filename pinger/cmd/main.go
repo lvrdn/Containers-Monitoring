@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -8,7 +9,6 @@ import (
 	"pinger/pkg/pinger"
 	"sync"
 	"syscall"
-	"time"
 )
 
 type Str struct {
@@ -22,43 +22,36 @@ func main() {
 		log.Fatalf("get config failed: [%s]\n", err.Error())
 	}
 
-	workers := make([]*pinger.Pinger, len(cfg.Addresses))
+	wg := &sync.WaitGroup{}
+	ctx, finish := context.WithCancel(context.Background())
+
+	log.Println("Pinger started")
 
 	for i := range cfg.Addresses {
-		workers[i] = &pinger.Pinger{
+		pinger := &pinger.Pinger{
 			PingAddr:  cfg.Addresses[i],
 			AddrAPI:   cfg.AddrAPI,
 			MethodAPI: cfg.MethodAPI,
 			Timeout:   cfg.PingTimeout,
+			Frequency: cfg.PingFrequency,
 		}
+
+		wg.Add(1)
+		go start(ctx, pinger, wg)
 	}
-
-	ticker := time.NewTicker(cfg.PingFrequency)
-
-	wg := &sync.WaitGroup{}
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	<-stop
 
-	log.Println("Pinger started")
-
-LOOP:
-	for {
-		select {
-		case <-ticker.C:
-			for _, worker := range workers {
-				go worker.Ping(wg)
-			}
-
-		case <-stop:
-			wg.Wait()
-			break LOOP
-
-		default:
-			continue
-		}
-	}
+	finish()
+	wg.Wait()
 
 	log.Println("Pinger stopped")
 
+}
+
+func start(ctx context.Context, pinger *pinger.Pinger, wg *sync.WaitGroup) {
+	pinger.Run(ctx)
+	wg.Done()
 }
