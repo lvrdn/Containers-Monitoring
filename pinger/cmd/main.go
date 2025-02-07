@@ -11,10 +11,6 @@ import (
 	"syscall"
 )
 
-type Str struct {
-	Name string
-}
-
 func main() {
 
 	cfg, err := config.GetConfig()
