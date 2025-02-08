@@ -2,8 +2,8 @@ package main
 
 import (
 	"api/pkg/config"
-	"api/pkg/container"
-	"api/pkg/storage"
+	"api/pkg/handler"
+	"api/pkg/storage/postgres"
 	"context"
 	"database/sql"
 	"fmt"
@@ -42,7 +42,7 @@ func main() {
 		log.Fatalf("db ping failed, error: [%s]\n", err.Error())
 	}
 
-	containerHandler := container.NewContainerHandler(storage.NewStorage(db, len(cfg.Addresses)))
+	containerHandler := handler.NewContainerHandler(postgres.NewStorage(db, len(cfg.Addresses)))
 
 	err = containerHandler.InitData(cfg.Addresses)
 	if err != nil {

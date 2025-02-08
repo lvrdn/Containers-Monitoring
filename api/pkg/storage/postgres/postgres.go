@@ -1,4 +1,4 @@
-package storage
+package postgres
 
 import (
 	"api/pkg/container"
@@ -28,14 +28,14 @@ func (st *Storage) AddNewContainerRecord(address string) error {
 	}
 }
 
-func (st *Storage) UpdateContainerRecord(address string, time time.Time, alive bool) error {
+func (st *Storage) UpdateContainerRecord(container *container.Container) error {
 
 	var err error
 
-	if alive {
-		_, err = st.DB.Exec("UPDATE containers SET last_ping=$1, last_success_ping=$2 WHERE address=$3", time, time, address)
+	if *container.Alive {
+		_, err = st.DB.Exec("UPDATE containers SET last_ping=$1, last_success_ping=$2 WHERE address=$3", *container.LastPing, *container.LastPing, container.Addr)
 	} else {
-		_, err = st.DB.Exec("UPDATE containers SET last_ping=$1 WHERE address=$2", time, address)
+		_, err = st.DB.Exec("UPDATE containers SET last_ping=$1 WHERE address=$2", *container.LastPing, container.Addr)
 	}
 
 	if err != nil {
