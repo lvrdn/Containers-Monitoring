@@ -5,15 +5,22 @@ import './App.css';
 
 function App() {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); 
+  const [hasError, setHasError] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState(''); 
 
   useEffect(() => {
-    // Функция для получения данных с API
     const fetchData = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8086/api/containers');
-        setData(response.data);
+        setData(response.data); 
+        setHasError(false); 
       } catch (error) {
-        console.error('Ошибка при получении данных:', error);
+        console.error('get data error:', error);
+        setHasError(true);
+        setErrorMessage(error.message); 
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -23,7 +30,16 @@ function App() {
   return (
     <div className="App">
       <h1>Containers list</h1>
-      <Table data={data} />
+
+      {loading && <div>Loading...</div>}
+
+      {hasError && (
+        <div style={{ color: 'red' }}>
+          Error happen: {errorMessage}
+        </div>
+      )}
+
+      {!loading && !hasError && <Table data={data} />}
     </div>
   );
 }

@@ -1,26 +1,36 @@
 import React from 'react';
+import { Table } from 'antd';
+import 'antd/dist/reset.css'; 
 
-const Table = ({ data }) => {
+const TableComponent = ({ data }) => {
+  const columns = [
+    {
+      title: 'Address',
+      dataIndex: 'addr',
+      key: 'addr',
+    },
+    {
+      title: 'Last ping time',
+      dataIndex: 'last_ping_time',
+      key: 'last_ping_time',
+      render: (text) => text || '-', 
+    },
+    {
+      title: 'Last alive time',
+      dataIndex: 'last_alive_time',
+      key: 'last_alive_time',
+      render: (text) => text || '-',
+    },
+  ];
+
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Address</th>
-          <th>Last ping time</th>
-          <th>Last alive time</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((item, index) => (
-          <tr key={index}>
-            <td>{item.addr}</td>
-            <td>{item.last_ping_time || ''}</td>
-            <td>{item.last_alive_time || ''}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <Table
+      columns={columns}
+      dataSource={data}
+      rowKey="addr" 
+      pagination={false} 
+    />
   );
 };
 
-export default Table;
+export default TableComponent;
