@@ -10,7 +10,7 @@ type Config struct {
 	DBname          string   `envconfig:"DB_NAME"`
 	DBusername      string   `envconfig:"DB_USERNAME"`
 	DBpassword      string   `envconfig:"DB_PASSWORD"`
-	Addresses       []string `envconfig:"ADDRESSES"`
+	Addresses       []string `envconfig:"PING_ADDRESSES"`
 	FrontendAddress string   `envconfig:"FRONTEND_ADDRESS"`
 }
 

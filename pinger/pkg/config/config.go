@@ -8,9 +8,9 @@ import (
 )
 
 type Config struct {
-	Addresses     []string      `envconfig:"ADDRESSES"`
-	PingTimeout   time.Duration `envconfig:"TIMEOUT"`
-	PingFrequency time.Duration `envconfig:"FREQUENCY"`
+	Addresses     []string      `envconfig:"PING_ADDRESSES"`
+	PingTimeout   time.Duration `envconfig:"PING_TIMEOUT"`
+	PingFrequency time.Duration `envconfig:"PING_FREQUENCY"`
 	AddrAPI       string        `envconfig:"ADDRESS_API"`
 	MethodAPI     string        `envconfig:"METHOD_API"`
 }
