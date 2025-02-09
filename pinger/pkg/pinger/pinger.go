@@ -37,17 +37,15 @@ func (p *Pinger) Run(ctx context.Context) {
 			time := time.Now()
 			alive := p.ping()
 
-			info := Info{
+			info := &Info{
 				Addr:  p.PingAddr,
 				Alive: alive,
 				Time:  time,
 			}
-			err := info.send(p.AddrAPI, p.MethodAPI)
+			err := p.send(p.AddrAPI, p.MethodAPI, info)
 			if err != nil {
 				log.Printf("send ping info error: dest [%s], error text [%s]", p.AddrAPI, err.Error())
 			}
-		default:
-			continue
 		}
 	}
 }
@@ -71,9 +69,9 @@ func (p *Pinger) ping() bool {
 	return alive
 }
 
-func (i *Info) send(addr, method string) error {
+func (p *Pinger) send(addr, method string, info *Info) error {
 
-	dataToSend, err := json.Marshal(i)
+	dataToSend, err := json.Marshal(info)
 	if err != nil {
 		return err
 	}
