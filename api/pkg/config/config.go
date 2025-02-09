@@ -5,13 +5,12 @@ import (
 )
 
 type Config struct {
-	HTTPport        string   `envconfig:"PORT"`
-	DBhost          string   `envconfig:"DB_HOST"`
-	DBname          string   `envconfig:"DB_NAME"`
-	DBusername      string   `envconfig:"DB_USERNAME"`
-	DBpassword      string   `envconfig:"DB_PASSWORD"`
-	Addresses       []string `envconfig:"PING_ADDRESSES"`
-	FrontendAddress string   `envconfig:"FRONTEND_ADDRESS"`
+	HTTPport   string   `envconfig:"API_PORT"`
+	DBhost     string   `envconfig:"DB_HOST"`
+	DBname     string   `envconfig:"POSTGRES_DB"`
+	DBusername string   `envconfig:"POSTGRES_USER"`
+	DBpassword string   `envconfig:"POSTGRES_PASSWORD"`
+	Addresses  []string `envconfig:"PING_ADDRESSES"`
 }
 
 func GetConfig() (*Config, error) {
