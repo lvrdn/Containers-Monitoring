@@ -31,3 +31,5 @@
  Для остановки приложения можно воспользоваться командой **make off** в консоли в корне проекта или интерфейсом Docker Desktop.
 
  ## Пример вывода таблицы отслеживаемых адресов **http://localhost:80** :
+
+![Image alt](https://github.com/lvrdn/Containers-Monitoring/blob/main/table_example.png)
