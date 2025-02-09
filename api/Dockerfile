@@ -10,8 +10,10 @@ WORKDIR /api
 COPY api/. .
 RUN go build -o bin/api cmd/main.go
 
+
 FROM debian:stable-slim
 WORKDIR /api
 COPY --from=build /api/bin/api .
+COPY wait-for-it.sh .
 RUN chmod +x /api/api
-CMD /api/api
+CMD ["/api/wait-for-it.sh","dbPostgresql:5432","--","/api/api"]

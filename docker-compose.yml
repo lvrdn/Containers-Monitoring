@@ -1,0 +1,61 @@
+#version: '3.9'
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  api:
+    container_name: api-service
+    build:
+      dockerfile: ./api/Dockerfile
+    image: api
+    env_file:
+      - ./app.env
+    networks:
+      - ${NETWORK_NAME}
+    links:
+      - dbPostgresql:dbPostgresql
+    depends_on:
+      - "dbPostgresql"
+    command: ["/api/wait-for-it.sh","dbPostgresql:5432","--","/api/api"]
+
+  pinger:
+    container_name: pinger-service
+    build:
+      dockerfile: ./pinger/Dockerfile
+    image: pinger
+    env_file:
+      - ./app.env
+    networks:
+      - ${NETWORK_NAME}
+    links:
+      - api:api
+    depends_on:
+      - "api"
+    command: ["/pinger/wait-for-it.sh","api:8086","--","/pinger/pinger"]
+
+  dbPostgresql:
+    container_name: DBmonitoring
+    image: postgres
+    restart: always
+    env_file:
+      - ./app.env
+    networks:
+      - ${NETWORK_NAME}
+    volumes:
+      - ./database/:/docker-entrypoint-initdb.d/
+
+  frontend:
+    container_name: frontend-service
+    build:
+      dockerfile: ./frontend/react-intro/Dockerfile
+    image: frontend
+    env_file:
+      - ./app.env
+    networks:
+      - ${NETWORK_NAME}
+    ports:
+      - "80:80"
+    command: ["nginx", "-g", "daemon off;"]
+
