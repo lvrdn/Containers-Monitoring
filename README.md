@@ -35,6 +35,8 @@
  
  Для остановки приложения можно воспользоваться командой **make off** в консоли в корне проекта или интерфейсом Docker Desktop.
 
+ Остальные команды Makefile использовались для одиночного тестирования сервисов.
+
  ## Пример вывода таблицы **http://localhost:80** :
 
 ![Image alt](https://github.com/lvrdn/Containers-Monitoring/blob/main/table_example.png)
