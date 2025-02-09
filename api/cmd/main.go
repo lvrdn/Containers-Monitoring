@@ -14,7 +14,6 @@ import (
 	"syscall"
 
 	_ "github.com/lib/pq"
-	"github.com/rs/cors"
 )
 
 func main() {
@@ -53,14 +52,9 @@ func main() {
 	mux.HandleFunc("POST /api/containers", containerHandler.UpdateData)
 	mux.HandleFunc("GET /api/containers", containerHandler.ShowData)
 
-	options := cors.Options{
-		AllowedOrigins: []string{cfg.FrontendAddress},
-	}
-	corsMW := cors.New(options).Handler(mux)
-
 	server := http.Server{
 		Addr:    ":" + cfg.HTTPport,
-		Handler: corsMW,
+		Handler: mux,
 	}
 
 	go func() {
