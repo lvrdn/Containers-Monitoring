@@ -1,3 +1,11 @@
+compose_up:
+	docker-compose --env-file ./app.env up
+
+on:
+	docker-compose --env-file ./app.env start
+
+off:
+	docker-compose --env-file ./app.env stop
 
 .PHONY: api
 api:
@@ -17,6 +25,8 @@ pinger:
 
 .PHONY: frontend
 frontend:
+	set -a; \
+	. ./app.env; \
 	cd ./frontend/react-intro; \
 	npm start
 
